@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101d2d">
+  <title>Landscape Supply | Loader Orders</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand-mark" aria-hidden="true"><svg viewBox="0 0 48 40"><path d="M3 32 17 9l7 11 6-9 15 21H3Z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/><path d="m12 32 8-12 7 8 5-7 7 11" fill="none" stroke="currentColor" stroke-width="2"/></svg></div>
+      <div class="brand">Landscape Supply</div>
+      <div class="top-divider"></div>
+      <div class="page-name">Loader Orders</div>
+      <div class="top-spacer"></div>
+      <div class="connection"><span class="wifi-icon">⌁</span><span id="connectionText">Demo mode · local data</span></div>
+      <div class="clock"><span id="dateText"></span><strong id="timeText"></strong></div>
+      <button class="mobile-menu" id="mobileMenu" aria-label="Open navigation">☰</button>
+    </header>
+
+    <main class="main-content">
+      <section id="ordersPage" class="page active">
+        <div class="orders-layout">
+          <section class="order-queue panel">
+            <div class="queue-tabs">
+              <button class="queue-tab active" data-queue="active">Active Orders <span id="activeCount">0</span></button>
+              <button class="queue-tab" data-queue="completed">Completed (Today) <span id="completedCount">0</span></button>
+            </div>
+            <div class="queue-tools">
+              <label class="search-box"><span>⌕</span><input id="orderSearch" type="search" placeholder="Search order, customer or product"></label>
+              <button class="small-button" id="addDemoOrder">＋ Demo order</button>
+            </div>
+            <div id="orderList" class="order-list" aria-live="polite"></div>
+            <div id="emptyOrders" class="empty-state hidden">
+              <div class="empty-icon">✓</div><strong>All clear</strong><p>No orders in this list.</p>
+            </div>
+          </section>
+
+          <section class="order-detail panel" id="orderDetail">
+            <div class="detail-empty hidden" id="detailEmpty">
+              <div class="empty-icon">▤</div><h2>Select an order</h2><p>Choose an order from the list to view its loading details.</p>
+            </div>
+            <div id="detailContent"></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="productsPage" class="page">
+        <div class="page-heading"><div><p class="eyebrow">YARD CATALOGUE</p><h1>Products</h1><p class="muted">Demo product list for the prototype. This is not connected to Zulu.</p></div><button class="primary-button" id="addProductButton">＋ Add product</button></div>
+        <div class="catalog-grid" id="productGrid"></div>
+      </section>
+
+      <section id="settingsPage" class="page">
+        <div class="page-heading"><div><p class="eyebrow">CONFIGURATION</p><h1>Settings</h1><p class="muted">Prototype settings saved in this browser.</p></div></div>
+        <div class="settings-grid">
+          <section class="settings-card"><h2>Yard details</h2><label>Display name<input id="yardName" value="Landscape Supply"></label><label>Machine name (this device)<select id="machineName"><option>Kubota Loader</option><option>JCB Loadall</option><option>Office / Dispatch</option></select></label><label>Order refresh interval<select id="refreshInterval"><option value="5">5 seconds</option><option value="10">10 seconds</option><option value="30">30 seconds</option></select></label><button class="primary-button" id="saveSettings">Save settings</button><p class="form-message" id="settingsMessage"></p></section>
+          <section class="settings-card"><h2>Zulu integration</h2><div class="notice"><strong>Not connected yet</strong><p>This prototype uses sample orders stored in the browser. Do not enter Zulu passwords or API keys here.</p></div><p>When you receive Zulu's API documentation, integration will need a small backend service that securely retrieves or receives sales, then publishes order updates to the screens.</p><ul><li>Never put API secrets in browser JavaScript.</li><li>Confirm completed POS sales, line items, quantities and notes are available.</li><li>Decide which sales should appear on the loader queue.</li></ul><a class="text-link" href="zulu-integration.md" target="_blank" rel="noopener">Read integration notes ↗</a></section>
+          <section class="settings-card"><h2>Prototype controls</h2><p>Use these to test the interface before connecting real sales.</p><button class="secondary-button full-width" id="resetDemo">Reset sample orders</button><button class="danger-button full-width" id="clearCompleted">Clear completed history</button><p class="muted tiny">Demo actions affect this browser's local data only. Other devices are not truly synchronised in this static version.</p></section>
+          <section class="settings-card"><h2>Connection status</h2><div class="status-row"><span class="status-dot green"></span><div><strong>Browser app running</strong><p class="muted">The page is loaded successfully.</p></div></div><div class="status-row"><span class="status-dot amber"></span><div><strong>Zulu feed</strong><p class="muted">Not configured — sample data only.</p></div></div><div class="status-row"><span class="status-dot amber"></span><div><strong>Shared live sync</strong><p class="muted">Requires a backend or shared local service.</p></div></div></section>
+        </div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" id="bottomNav">
+      <button class="nav-item active" data-page="ordersPage"><span class="nav-icon">▤</span><span>Orders</span></button>
+      <button class="nav-item" data-page="productsPage"><span class="nav-icon">♧</span><span>Products</span></button>
+      <button class="nav-item" data-page="settingsPage"><span class="nav-icon">⚙</span><span>Settings</span></button>
+      <div class="nav-spacer"></div><div class="last-updated"><span>◷</span><span>Last updated <b id="lastUpdated">just now</b></span><button id="refreshButton" aria-label="Refresh demo view">⟳</button></div>
+    </nav>
+  </div>
+
+  <dialog id="orderModal" class="modal">
+    <form method="dialog" id="orderForm">
+      <div class="modal-header"><div><p class="eyebrow">NEW SAMPLE</p><h2>Add demo order</h2></div><button class="icon-button" value="cancel" aria-label="Close">×</button></div>
+      <label>Customer name<input id="newCustomer" required placeholder="e.g. Smith"></label>
+      <label>Vehicle / identifier<input id="newVehicle" placeholder="e.g. White trailer"></label>
+      <label>Products and quantities<textarea id="newItems" required rows="3" placeholder="2|ARB mulch&#10;0.5|Topsoil"></textarea><small>One product per line, format: quantity|product name</small></label>
+      <label>Special instructions<textarea id="newNotes" rows="2" placeholder="Keep products separate..."></textarea></label>
+      <div class="modal-actions"><button class="secondary-button" value="cancel">Cancel</button><button class="primary-button" id="createOrder" value="default">Add order</button></div>
+    </form>
+  </dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>
